@@ -9,6 +9,8 @@ load_dotenv('.env')
 
 def message_handler(ch, method, _, data):
     try:
+        start_time = time.time()
+
         media_id = data.decode().upper()
         folders_path = '/'.join(list(media_id[:4]))
         filepath = f'periphery/{folders_path}/{media_id}.mxf'
@@ -33,6 +35,8 @@ def message_handler(ch, method, _, data):
         hashes = services.get_file_hashes(filepath)
 
         logging.warning(dict(hashes))
+
+        print(f"{media_id}: Took {time.time() - start_time} seconds")
 
     except Exception as e:
         logging.error(repr(e))
