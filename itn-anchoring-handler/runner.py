@@ -46,6 +46,6 @@ def message_handler(ch, method, _, data):
 
 time.sleep(15)
 
-for _ in range(3):
+for _ in range(10):
     td = services.RabbitMqThreadedConsumer(message_handler)
     td.start()
