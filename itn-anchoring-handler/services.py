@@ -69,8 +69,8 @@ def get_azure_data_tables_data(media_id: str):
         data = table_client.get_entity(partition_key, row_key)
         timestamp = str(data._metadata["timestamp"])[:19]
 
-        return AzureData(datetime.strptime(timestamp, "%y-%m-%d %H:%M:%S"), data["AspectRatio"],
-                         datetime.strptime(str(data["Created"])[:19], "%y-%m-%d %H:%M:%S"), data["Codec"],
+        return AzureData(datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S"), data["AspectRatio"],
+                         datetime.strptime(str(data["Created"])[:19], "%Y-%m-%d %H:%M:%S"), data["Codec"],
                          data["Duration"], int(data["FileLength"]), data["FileName"],
                          int(data["FrameRate"]), int(data["Height"]), int(data["Width"]),
                          base64.b64decode(data["MD5"]).decode())
@@ -91,8 +91,8 @@ def get_xendata(media_id: str):
     conn.close()
 
     return Xendata(
-        creation_date=datetime.strptime(row[0][:20], "%y-%m-%dT%H:%M:%S"),
-        modification_date=datetime.strptime(row[1][:20], "%y-%m-%dT%H:%M:%S"),
+        creation_date=datetime.strptime(row[0][:20], "%Y-%m-%dT%H:%M:%S"),
+        modification_date=datetime.strptime(row[1][:20], "%Y-%m-%dT%H:%M:%S"),
         size=int(row[2])
     )
 
