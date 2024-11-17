@@ -69,8 +69,8 @@ def get_azure_data_tables_data(media_id: str):
         data = table_client.get_entity(partition_key, row_key)
         timestamp = str(data._metadata["timestamp"])
 
-        return AzureData(datetime.strptime(timestamp, "%y-%m-%dT%H:%M:%S"), data["AspectRatio"],
-                         datetime.strptime(str(data["Created"]), "%y-%m-%dT%H:%M:%S"), data["Codec"],
+        return AzureData(datetime.strptime(timestamp, "%y-%m-%d %H:%M:%S"), data["AspectRatio"],
+                         datetime.strptime(str(data["Created"]), "%y-%m-%d %H:%M:%S"), data["Codec"],
                          data["Duration"], int(data["FileLength"]), data["FileName"],
                          int(data["FrameRate"]), int(data["Height"]), int(data["Width"]),
                          base64.b64decode(data["MD5"]).decode())
