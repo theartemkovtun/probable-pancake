@@ -57,7 +57,7 @@ def get_periphery_stats(filepath: str):
 
 def get_azure_data_tables_data(media_id: str):
     partition_key = f"ITN_{media_id[:3]}"
-    row_key = ''.join(media_id[4:].split('-'))
+    row_key = ''.join(media_id[3:].split('-'))
 
     with TableServiceClient(
             endpoint=os.environ.get("AZURE_DATA_TABLE_CONNECTION_STRING"),
