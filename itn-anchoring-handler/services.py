@@ -68,10 +68,13 @@ def get_azure_data_tables_data(media_id: str):
 
         data = table_client.get_entity(partition_key, row_key)
 
-        return AzureData(datetime.strptime(data["Timestamp"], "%y-%m-%dT%H:%M:%S"), data["AspectRatio"],
-                         datetime.strptime(data["Created"], "%y-%m-%dT%H:%M:%S"), data["Codec"], data["Duration"],
-                         int(data["FileLength"]), data["FileName"], int(data["FrameRate"]), int(data["Height"]),
-                         int(data["Width"]), md5_hash=base64.b64decode(data["MD5"]).decode())
+        properties = data['content']['properties']
+
+        return AzureData(datetime.strptime(properties["Timestamp"], "%y-%m-%dT%H:%M:%S"), properties["AspectRatio"],
+                         datetime.strptime(properties["Created"], "%y-%m-%dT%H:%M:%S"), properties["Codec"],
+                         properties["Duration"], int(properties["FileLength"]), properties["FileName"],
+                         int(properties["FrameRate"]), int(properties["Height"]), int(properties["Width"]),
+                         base64.b64decode(data["MD5"]).decode())
 
 
 def get_xendata(media_id: str):
