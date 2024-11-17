@@ -28,7 +28,7 @@ def message_handler(ch, method, _, data):
 
         era = services.identify_era(azure_data.created)
 
-        logging.warning(dict(era))
+        logging.warning(era)
 
         hashes = services.get_file_hashes(filepath)
 
