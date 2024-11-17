@@ -10,6 +10,7 @@ load_dotenv('.env')
 def message_handler(ch, method, _, data):
     try:
         start_time = time.time()
+        ch.basic_ack(delivery_tag=method.delivery_tag)
 
         media_id = data.decode().upper()
         folders_path = '/'.join(list(media_id[:4]))
@@ -41,7 +42,7 @@ def message_handler(ch, method, _, data):
     except Exception as e:
         logging.error(repr(e))
 
-    ch.basic_ack(delivery_tag=method.delivery_tag)
+
 
 
 time.sleep(15)
