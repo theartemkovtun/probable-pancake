@@ -1,5 +1,6 @@
 import os
 from models import PeripheryStats, FileHashes, AzureData, RecordEra, Xendata
+from azure.core.credentials import AzureSasCredential
 from datetime import datetime
 from azure.data.tables import TableServiceClient
 import hashlib
@@ -58,18 +59,19 @@ def get_azure_data_tables_data(media_id: str):
     partition_key = f"ITN_{media_id[:3]}"
     row_key = ''.join(media_id[4:].split('-'))
 
-    table_service_client = TableServiceClient.from_connection_string(
-        conn_str=os.environ.get("AZURE_DATA_TABLE_CONNECTION_STRING"))
+    with TableServiceClient(
+            endpoint=os.environ.get("AZURE_DATA_TABLE_CONNECTION_STRING"),
+            credential=AzureSasCredential(os.environ.get("AZURE_DATA_TABLE_SAS"))
+    ) as table_service_client:
+        table_client = table_service_client.get_table_client(
+            table_name=os.environ.get("AZURE_DATA_TABLE_NAME"))
 
-    table_client = table_service_client.get_table_client(
-        table_name=os.environ.get("AZURE_DATA_TABLE_NAME"))
+        data = table_client.get_entity(partition_key, row_key)
 
-    data = table_client.get_entity(partition_key, row_key)
-
-    return AzureData(datetime.strptime(data["Timestamp"], "%y-%m-%dT%H:%M:%S"), data["AspectRatio"],
-                     datetime.strptime(data["Created"], "%y-%m-%dT%H:%M:%S"), data["Codec"], data["Duration"],
-                     int(data["FileLength"]), data["FileName"], int(data["FrameRate"]), int(data["Height"]),
-                     int(data["Width"]), md5_hash=base64.b64decode(data["MD5"]).decode())
+        return AzureData(datetime.strptime(data["Timestamp"], "%y-%m-%dT%H:%M:%S"), data["AspectRatio"],
+                         datetime.strptime(data["Created"], "%y-%m-%dT%H:%M:%S"), data["Codec"], data["Duration"],
+                         int(data["FileLength"]), data["FileName"], int(data["FrameRate"]), int(data["Height"]),
+                         int(data["Width"]), md5_hash=base64.b64decode(data["MD5"]).decode())
 
 
 def get_xendata(media_id: str):
