@@ -36,7 +36,7 @@ def message_handler(ch, method, _, data):
 
         logging.warning(dict(hashes))
 
-        print(f"{media_id}: Took {time.time() - start_time} seconds")
+        logging.warning(f"{media_id}: Took {time.time() - start_time} seconds")
 
     except Exception as e:
         logging.error(repr(e))
