@@ -8,8 +8,7 @@ services:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
     volumes:
-      # /mnt/sdb/rabbitmq
-      - /Users/artemkovtun/Projects/OpenOrigins/ITN/data/rabbitmq:/var/lib/rabbitmq
+      - /mnt/sdb/rabbitmq:/var/lib/rabbitmq
     ports:
       - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
     networks:
@@ -38,8 +37,7 @@ services:
       XENDATA_USER: ${XENDATA_USER}
       XENDATA_PASSWORD: ${XENDATA_PASSWORD}
     volumes:
-      # /mnt/mxfs/Archive
-      - /Users/artemkovtun/Projects/OpenOrigins/ITN/data/periphery:/anchoring-handler/periphery
+      - /mnt/mxfs/Archive:/anchoring-handler/periphery
 
   anchoring-api:
     container_name: anchoring-api
