@@ -1,0 +1,65 @@
+services:
+
+  rabbitmq:
+    image: rabbitmq:4.0.2
+    hostname: ${RABBITMQ_HOST}
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    volumes:
+      # /mnt/sdb/rabbitmq
+      - /Users/artemkovtun/Projects/OpenOrigins/ITN/data/rabbitmq:/var/lib/rabbitmq
+    ports:
+      - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
+    networks:
+      - backend
+
+  anchoring-handler:
+    container_name: anchoring-handler
+    hostname: anchoring-handler
+    build:
+      context: ./itn-anchoring-handler
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}
+      AZURE_DATA_TABLE_CONNECTION_STRING: ${AZURE_DATA_TABLE_CONNECTION_STRING}
+      AZURE_DATA_TABLE_NAME: ${AZURE_DATA_TABLE_NAME}
+      XENDATA_SERVER: ${XENDATA_SERVER}
+      XENDATA_DATABASE: ${XENDATA_DATABASE}
+      XENDATA_USER: ${XENDATA_USER}
+      XENDATA_PASSWORD: ${XENDATA_PASSWORD}
+    volumes:
+      # /mnt/mxfs/Archive
+      - /Users/artemkovtun/Projects/OpenOrigins/ITN/data/periphery:/anchoring-handler/periphery
+
+  anchoring-api:
+    container_name: anchoring-api
+    hostname: anchoring-api
+    build:
+      context: ./itn-anchoring-api
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    depends_on:
+      - rabbitmq
+    ports:
+      - 3001:3001
+    environment:
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}
+
+networks:
+  backend:
+    driver: bridge    

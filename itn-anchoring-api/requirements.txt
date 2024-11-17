@@ -1,0 +1,6 @@
+fastapi~=0.115.4
+fastapi[standard]
+uvicorn
+python-dotenv~=1.0.1
+pydantic~=2.9.2
+pika
