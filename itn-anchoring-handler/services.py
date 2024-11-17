@@ -1,4 +1,6 @@
 import os
+import time
+
 from models import PeripheryStats, FileHashes, AzureData, RecordEra, Xendata
 from azure.core.credentials import AzureSasCredential
 from datetime import datetime
@@ -100,13 +102,26 @@ def get_xendata(media_id: str):
 
 
 def get_file_hashes(filepath: str):
+    smart_time = time.time()
+    current_chunk = 1
+
     md5 = hashlib.md5()
     sha3512 = hashlib.sha3_512()
 
     with open(filepath, 'rb') as file:
         for piece in read_in_chunks(file):
+            read_time = time.time() - smart_time
+            smart_time = time.time()
+
             md5.update(piece)
             sha3512.update(piece)
+
+            hash_time = time.time() - smart_time
+            smart_time = time.time()
+
+            logging.warning(f"Chunk #{current_chunk}: read time - {read_time} sec, hash time - {hash_time} sec")
+
+            current_chunk += 1
 
     return FileHashes(base64.b64encode(md5.digest()).decode(), sha3512.hexdigest())
 
