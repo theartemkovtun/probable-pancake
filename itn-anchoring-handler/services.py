@@ -81,27 +81,21 @@ def get_xendata(media_id: str):
     # b8ffd07f-4127-41cd-8dbf-3675a897225d -> 0/ITN/b/8/f/f/b8ffd07f-4127-41cd-8dbf-3675a897225d.mxf
     key = '0/ITN/' + '/'.join(list(media_id[:4])) + '/' + media_id + '.mxf'
 
-    logging.warning(key)
-
     conn = pymssql.connect(os.environ.get("XENDATA_SERVER"), os.environ.get("XENDATA_USER"),
                            os.environ.get("XENDATA_PASSWORD"), os.environ.get("XENDATA_DATABASE"))
     cursor = conn.cursor(as_dict=True)
 
     query = f"""SELECT * FROM OPENQUERY([XENDATA], 'SELECT CreationTime, ModificationTime, Size FROM FILES WHERE Path LIKE "{key}"')"""
 
-    logging.warning(query)
-
     cursor.execute(query)
     row = cursor.fetchone()
-
-    logging.warning(row);
 
     conn.close()
 
     return Xendata(
-        creation_date=datetime.strptime(row[0][:20], "%Y-%m-%dT%H:%M:%S"),
-        modification_date=datetime.strptime(row[1][:20], "%Y-%m-%dT%H:%M:%S"),
-        size=int(row[2])
+        creation_date=row['CreationTime'],
+        modification_date=row['ModificationTime'],
+        size=row['Size']
     )
 
 

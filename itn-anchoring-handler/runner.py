@@ -9,7 +9,7 @@ load_dotenv('.env')
 
 def message_handler(ch, method, _, data):
     try:
-        media_id = data.decode().lower()
+        media_id = data.decode().upper()
         folders_path = '/'.join(list(media_id[:4]))
         filepath = f'periphery/{folders_path}/{media_id}.mxf'
 
