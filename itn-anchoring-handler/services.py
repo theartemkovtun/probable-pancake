@@ -87,7 +87,7 @@ def get_xendata(media_id: str):
                            os.environ.get("XENDATA_PASSWORD"), os.environ.get("XENDATA_DATABASE"))
     cursor = conn.cursor(as_dict=True)
 
-    query = f"""SELECT * FROM OPENQUERY([XENDATA], 'SELECT CreationTime, ModificationTime, Size FROM FILES WHERE Path LIKE "${key}"')"""
+    query = f"""SELECT * FROM OPENQUERY([XENDATA], 'SELECT CreationTime, ModificationTime, Size FROM FILES WHERE Path LIKE "{key}"')"""
 
     logging.warning(query)
 
