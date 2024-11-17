@@ -67,7 +67,6 @@ def get_azure_data_tables_data(media_id: str):
             table_name=os.environ.get("AZURE_DATA_TABLE_NAME"))
 
         data = table_client.get_entity(partition_key, row_key)
-        logging.warning(data)
         timestamp = str(data._metadata["timestamp"])[:19]
 
         return AzureData(datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S"), data["AspectRatio"],
@@ -82,12 +81,20 @@ def get_xendata(media_id: str):
     # b8ffd07f-4127-41cd-8dbf-3675a897225d -> 0/ITN/b/8/f/f/b8ffd07f-4127-41cd-8dbf-3675a897225d.mxf
     key = '0/ITN/' + '/'.join(list(media_id[:4])) + '/' + media_id + '.mxf'
 
+    logging.warning(key)
+
     conn = pymssql.connect(os.environ.get("XENDATA_SERVER"), os.environ.get("XENDATA_USER"),
                            os.environ.get("XENDATA_PASSWORD"), os.environ.get("XENDATA_DATABASE"))
     cursor = conn.cursor(as_dict=True)
 
-    cursor.execute(f"""SELECT * FROM OPENQUERY([XENDATA], 'SELECT CreationTime, ModificationTime, Size FROM FILES WHERE Path LIKE "${key}"')""")
+    query = f"""SELECT * FROM OPENQUERY([XENDATA], 'SELECT CreationTime, ModificationTime, Size FROM FILES WHERE Path LIKE "${key}"')"""
+
+    logging.warning(query)
+
+    cursor.execute(query)
     row = cursor.fetchone()
+
+    logging.warning(row);
 
     conn.close()
 
