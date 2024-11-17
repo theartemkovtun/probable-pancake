@@ -108,7 +108,7 @@ def get_file_hashes(filepath: str):
             md5.update(piece)
             sha3512.update(piece)
 
-    return FileHashes(md5.hexdigest(), sha3512.hexdigest())
+    return FileHashes(base64.b64encode(md5.digest()).decode(), sha3512.hexdigest())
 
 
 def identify_era(date: datetime):
