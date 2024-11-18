@@ -16,22 +16,16 @@ def message_handler(ch, method, _, data):
         folders_path = '/'.join(list(media_id[:4]))
         filepath = f'periphery/{folders_path}/{media_id}.mxf'
 
+        print(f"New item: {media_id}")
+
         periphery_stats = services.get_periphery_stats(filepath)
         filepath = periphery_stats.filepath
 
-        logging.warning(dict(periphery_stats))
-
         azure_data = services.get_azure_data_tables_data(media_id)
-
-        logging.warning(dict(azure_data))
 
         xen_data = services.get_xendata(media_id)
 
-        logging.warning(dict(xen_data))
-
         era = services.identify_era(azure_data.created)
-
-        logging.warning(era)
 
         hashes = services.get_file_hashes(filepath)
 
@@ -45,6 +39,6 @@ def message_handler(ch, method, _, data):
 
 time.sleep(15)
 
-for _ in range(3):
+for _ in range(10):
     td = services.RabbitMqThreadedConsumer(message_handler)
     td.start()

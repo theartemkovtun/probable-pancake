@@ -21,7 +21,7 @@ class RabbitMqThreadedConsumer(threading.Thread):
             password=os.environ.get("RABBITMQ_PASSWORD")
         )
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(
-            os.environ.get("RABBITMQ_HOST"), os.environ.get("RABBITMQ_PORT"), '/', credentials)
+            os.environ.get("RABBITMQ_HOST"), os.environ.get("RABBITMQ_PORT"), '/', credentials, heartbeat=0)
         )
 
         self.channel = self.connection.channel()
@@ -33,7 +33,7 @@ class RabbitMqThreadedConsumer(threading.Thread):
         self.channel.start_consuming()
 
 
-def read_in_chunks(file_object, chunk_size=300000000):
+def read_in_chunks(file_object, chunk_size=1000000000):
     while True:
         data = file_object.read(chunk_size)
         if not data:
@@ -119,7 +119,7 @@ def get_file_hashes(filepath: str):
             hash_time = time.time() - smart_time
             smart_time = time.time()
 
-            logging.warning(f"Chunk #{current_chunk}: read time - {read_time} sec, hash time - {hash_time} sec")
+            print(f"{filepath[-40:-4]}: Chunk #{current_chunk}: read time - {read_time} sec, hash time - {hash_time} sec")
 
             current_chunk += 1
 

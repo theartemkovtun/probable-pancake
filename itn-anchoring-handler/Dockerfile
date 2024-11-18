@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir --upgrade -r ${WORKDIR}/requirements.txt
 
 COPY . ${WORKDIR}
 
-CMD ["python", "/anchoring-handler/runner.py"]
+CMD ["python", "-u", "/anchoring-handler/runner.py"]
