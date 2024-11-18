@@ -29,9 +29,9 @@ def message_handler(ch, method, _, data):
 
         hashes = services.get_file_hashes(filepath)
 
-        logging.warning(dict(hashes))
+        print(dict(hashes))
 
-        logging.warning(f"{media_id}: Took {time.time() - start_time} seconds")
+        print(f"{media_id}: Took {time.time() - start_time} seconds")
 
     except Exception as e:
         logging.error(repr(e))
