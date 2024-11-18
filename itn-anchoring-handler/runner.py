@@ -2,6 +2,7 @@ import logging
 from dotenv import load_dotenv
 import time
 import services
+import math
 
 logger = logging.getLogger(__name__)
 load_dotenv('.env')
@@ -27,10 +28,9 @@ def message_handler(ch, method, _, data):
 
         era = services.identify_era(azure_data.created)
 
-        hashes = services.get_file_hashes(filepath)
+        hashes = services.get_file_hashes(filepath, math.ceil(periphery_stats.size / 1000000000))
 
-        print(dict(hashes))
-
+        print(f"{media_id}: MD5 - {hashes.md5}, SHA3-512 - {hashes.sha3_512}")
         print(f"{media_id}: Took {time.time() - start_time} seconds")
 
     except Exception as e:

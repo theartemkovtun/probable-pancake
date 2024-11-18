@@ -101,7 +101,7 @@ def get_xendata(media_id: str):
     )
 
 
-def get_file_hashes(filepath: str):
+def get_file_hashes(filepath: str, total_chunks: int):
     smart_time = time.time()
     current_chunk = 1
 
@@ -119,7 +119,7 @@ def get_file_hashes(filepath: str):
             hash_time = time.time() - smart_time
             smart_time = time.time()
 
-            print(f"{filepath[-40:-4]}: Chunk #{current_chunk}: read time - {read_time} sec, hash time - {hash_time} sec")
+            print(f"{filepath[-40:-4]}: Chunk ({current_chunk}/{total_chunks}): read time - {read_time} sec, hash time - {hash_time} sec")
 
             current_chunk += 1
 
