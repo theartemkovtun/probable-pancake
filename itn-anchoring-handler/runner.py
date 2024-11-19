@@ -23,23 +23,23 @@ def message_handler(ch, method, _, data):
         filepath = periphery_stats.filepath
 
         if periphery_stats is not None:
-            logging.info(f"{media_id}: Periphery data successfully fetched")
+            logger.info(f"{media_id}: Periphery data successfully fetched")
         else:
-            logging.error(f"{media_id}: Failed fetched periphery data")
+            logger.error(f"{media_id}: Failed fetched periphery data")
 
         azure_data = services.get_azure_data_tables_data(media_id)
 
         if azure_data is not None:
-            logging.info(f"{media_id}: Azure data successfully fetched")
+            logger.info(f"{media_id}: Azure data successfully fetched")
         else:
-            logging.error(f"{media_id}: Failed fetched Azure data")
+            logger.error(f"{media_id}: Failed fetched Azure data")
 
         xen_data = services.get_xendata(media_id)
 
         if xen_data is not None:
-            logging.info(f"{media_id}: Xen data successfully fetched")
+            logger.info(f"{media_id}: Xen data successfully fetched")
         else:
-            logging.error(f"{media_id}: Failed fetched Xen data")
+            logger.error(f"{media_id}: Failed fetched Xen data")
 
         era = services.identify_era(azure_data.created)
 
