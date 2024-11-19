@@ -43,8 +43,8 @@ def message_handler(ch, method, _, data):
 
         era = services.identify_era(azure_data.created)
 
-        logging.info(f"{media_id}: Era identified - {era}")
-        logging.info(f"{media_id}: Hashing started")
+        logger.info(f"{media_id}: Era identified - {era}")
+        logger.info(f"{media_id}: Hashing started")
 
         hashes = services.get_file_hashes(filepath, math.ceil(periphery_stats.size / 1000000000))
 
