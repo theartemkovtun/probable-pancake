@@ -155,7 +155,7 @@ def submit_anchor_request(media_id: str, sha3_512_hash: str, metadata):
 
     headers = {"OO-ANCHORING-KEY": os.environ.get("ANCHORING_KEY")}
 
-    response = requests.put(f"{os.environ.get('ANCHORING_URL')}/api/anchor", headers=headers, json=request_body)
+    response = requests.post(f"{os.environ.get('ANCHORING_URL')}/api/anchor", headers=headers, json=request_body)
 
     if response.status_code != 200:
         raise Exception(F"Failed to submit anchor request: {response.status_code}, {response.text}")
