@@ -2,3 +2,4 @@ pika
 python-dotenv
 azure-data-tables
 pymssql
+requests

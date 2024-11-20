@@ -1,6 +1,7 @@
+import json
 import os
 import time
-
+import requests
 from models import PeripheryStats, FileHashes, AzureData, RecordEra, Xendata
 from azure.core.credentials import AzureSasCredential
 from datetime import datetime
@@ -10,7 +11,7 @@ import threading
 import pika
 import base64
 import pymssql
-import logging
+
 
 class RabbitMqThreadedConsumer(threading.Thread):
 
@@ -51,54 +52,61 @@ def get_periphery_stats(filepath: str):
         try:
             stats = os.stat(correct_path)
         except:
-            raise Exception("File does not found in the periphery storage")
+            raise Exception(f"Failed to fetch periphery data")
 
     return PeripheryStats(correct_path, int(stats.st_size), datetime.fromtimestamp(int(stats.st_ctime)),
                           datetime.fromtimestamp(int(stats.st_mtime)), datetime.fromtimestamp(int(stats.st_atime)))
 
 
 def get_azure_data_tables_data(media_id: str):
-    partition_key = f"ITN_{media_id[:3]}"
-    row_key = ''.join(media_id[3:].split('-'))
+    try:
+        partition_key = f"ITN_{media_id[:3]}"
+        row_key = ''.join(media_id[3:].split('-'))
 
-    with TableServiceClient(
-            endpoint=os.environ.get("AZURE_DATA_TABLE_CONNECTION_STRING"),
-            credential=AzureSasCredential(os.environ.get("AZURE_DATA_TABLE_SAS"))
-    ) as table_service_client:
-        table_client = table_service_client.get_table_client(
-            table_name=os.environ.get("AZURE_DATA_TABLE_NAME"))
+        with TableServiceClient(
+                endpoint=os.environ.get("AZURE_DATA_TABLE_CONNECTION_STRING"),
+                credential=AzureSasCredential(os.environ.get("AZURE_DATA_TABLE_SAS"))
+        ) as table_service_client:
+            table_client = table_service_client.get_table_client(
+                table_name=os.environ.get("AZURE_DATA_TABLE_NAME"))
 
-        data = table_client.get_entity(partition_key, row_key)
-        timestamp = str(data._metadata["timestamp"])[:19]
+            data = table_client.get_entity(partition_key, row_key)
+            timestamp = str(data._metadata["timestamp"])[:19]
 
-        return AzureData(datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S"), data["AspectRatio"],
-                         datetime.strptime(str(data["Created"])[:19], "%Y-%m-%d %H:%M:%S"), data["Codec"],
-                         data["Duration"], int(data["FileLength"].value), data["FileName"],
-                         int(data["FrameRate"]), int(data["Height"]), int(data["Width"]),
-                         base64.b64encode(data["MD5"]).decode())
+            return AzureData(datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S"), data["AspectRatio"],
+                             datetime.strptime(str(data["Created"])[:19], "%Y-%m-%d %H:%M:%S"), data["Codec"],
+                             data["Duration"], int(data["FileLength"].value), data["FileName"],
+                             int(data["FrameRate"]), int(data["Height"]), int(data["Width"]),
+                             base64.b64encode(data["MD5"]).decode())
+    except:
+        raise Exception(f"Failed to fetch Azure data")
 
 
 def get_xendata(media_id: str):
 
-    # b8ffd07f-4127-41cd-8dbf-3675a897225d -> 0/ITN/b/8/f/f/b8ffd07f-4127-41cd-8dbf-3675a897225d.mxf
-    key = '0/ITN/' + '/'.join(list(media_id[:4])) + '/' + media_id + '.mxf'
+    try:
 
-    conn = pymssql.connect(os.environ.get("XENDATA_SERVER"), os.environ.get("XENDATA_USER"),
-                           os.environ.get("XENDATA_PASSWORD"), os.environ.get("XENDATA_DATABASE"))
-    cursor = conn.cursor(as_dict=True)
+        # b8ffd07f-4127-41cd-8dbf-3675a897225d -> 0/ITN/b/8/f/f/b8ffd07f-4127-41cd-8dbf-3675a897225d.mxf
+        key = '0/ITN/' + '/'.join(list(media_id[:4])) + '/' + media_id + '.mxf'
 
-    query = f"""SELECT * FROM OPENQUERY([XENDATA], 'SELECT CreationTime, ModificationTime, Size FROM FILES WHERE Path LIKE "{key}"')"""
+        conn = pymssql.connect(os.environ.get("XENDATA_SERVER"), os.environ.get("XENDATA_USER"),
+                               os.environ.get("XENDATA_PASSWORD"), os.environ.get("XENDATA_DATABASE"))
+        cursor = conn.cursor(as_dict=True)
 
-    cursor.execute(query)
-    row = cursor.fetchone()
+        query = f"""SELECT * FROM OPENQUERY([XENDATA], 'SELECT CreationTime, ModificationTime, Size FROM FILES WHERE Path LIKE "{key}"')"""
 
-    conn.close()
+        cursor.execute(query)
+        row = cursor.fetchone()
 
-    return Xendata(
-        creation_date=row['CreationTime'],
-        modification_date=row['ModificationTime'],
-        size=row['Size']
-    )
+        conn.close()
+
+        return Xendata(
+            creation_date=row['CreationTime'],
+            modification_date=row['ModificationTime'],
+            size=row['Size']
+        )
+    except:
+        raise Exception("Failed to fetch Xen data")
 
 
 def get_file_hashes(filepath: str, total_chunks: int):
@@ -135,3 +143,19 @@ def identify_era(date: datetime):
         return RecordEra.Between2017And2022
     else:
         return RecordEra.Post2022
+
+
+def submit_anchor_request(media_id: str, sha3_512_hash: str, metadata):
+
+    request_body = {
+        "hash": sha3_512_hash,
+        "name": media_id,
+        "metadata": json.dumps(metadata)
+    }
+
+    headers = {"OO-ANCHORING-KEY": os.environ.get("ANCHORING_KEY")}
+
+    response = requests.put(f"{os.environ.get('ANCHORING_URL')}/api/anchor", headers=headers, json=request_body)
+
+    if response.status_code != 200:
+        raise Exception("Failed to submit anchor request")
