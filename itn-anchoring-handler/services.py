@@ -150,7 +150,7 @@ def submit_anchor_request(media_id: str, sha3_512_hash: str, metadata):
     request_body = {
         "hash": sha3_512_hash,
         "name": media_id,
-        "metadata": json.dumps(metadata)
+        "metadata": json.dumps(metadata, default=str)
     }
 
     headers = {"OO-ANCHORING-KEY": os.environ.get("ANCHORING_KEY")}
