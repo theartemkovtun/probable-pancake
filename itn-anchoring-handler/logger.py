@@ -16,25 +16,25 @@ def _build_output_message(message: str):
     return f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {message}\n"
 
 
-def info(message: str, output: str = None):
+def info(message: str, output: list[str] = None):
     print(message)
     if output:
-        output += _build_output_message(message)
+        output.append(_build_output_message(message))
 
 
-def warning(message: str, output: str = None):
+def warning(message: str, output: list[str] = None):
     print(f"{bcolors.WARNING}{message}{bcolors.ENDC}")
     if output:
-        output += _build_output_message(message)
+        output.append(_build_output_message(message))
 
 
-def error(message: str, output: str = None):
+def error(message: str, output: list[str] = None):
     print(f"{bcolors.ERROR}{message}{bcolors.ENDC}")
     if output:
-        output += _build_output_message(message)
+        output.append(_build_output_message(message))
 
 
-def success(message: str, output: str = None):
+def success(message: str, output: list[str] = None):
     print(f"{bcolors.OKGREEN}{message}{bcolors.ENDC}")
     if output:
-        output += _build_output_message(message)
+        output.append(_build_output_message(message))

@@ -9,7 +9,7 @@ load_dotenv('.env')
 
 
 def message_handler(ch, method, _, data):
-    log = ""
+    log = []
     media_id = data.decode().upper()
 
     try:
@@ -53,7 +53,7 @@ def message_handler(ch, method, _, data):
     except Exception as e:
         logger.error(f"{media_id}: {repr(e)}", log)
 
-    services.save_log_file(media_id, log)
+    services.save_log_file(media_id, "\n".join(log))
 
 
 time.sleep(15)
