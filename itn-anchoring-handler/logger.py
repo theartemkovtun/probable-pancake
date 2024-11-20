@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -10,17 +12,29 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-def info(message: str):
+def _build_output_message(message: str):
+    return f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {message}\n"
+
+
+def info(message: str, output: str = None):
     print(message)
+    if output:
+        output += _build_output_message(message)
 
 
-def warning(message: str):
+def warning(message: str, output: str = None):
     print(f"{bcolors.WARNING}{message}{bcolors.ENDC}")
+    if output:
+        output += _build_output_message(message)
 
 
-def error(message: str):
+def error(message: str, output: str = None):
     print(f"{bcolors.ERROR}{message}{bcolors.ENDC}")
+    if output:
+        output += _build_output_message(message)
 
 
-def success(message: str):
+def success(message: str, output: str = None):
     print(f"{bcolors.OKGREEN}{message}{bcolors.ENDC}")
+    if output:
+        output += _build_output_message(message)

@@ -83,9 +83,7 @@ def get_azure_data_tables_data(media_id: str):
 
 
 def get_xendata(media_id: str):
-
     try:
-
         # b8ffd07f-4127-41cd-8dbf-3675a897225d -> 0/ITN/b/8/f/f/b8ffd07f-4127-41cd-8dbf-3675a897225d.mxf
         key = '0/ITN/' + '/'.join(list(media_id[:4])) + '/' + media_id + '.mxf'
 
@@ -159,3 +157,8 @@ def submit_anchor_request(media_id: str, sha3_512_hash: str, metadata):
 
     if response.status_code != 200:
         raise Exception(F"Failed to submit anchor request: {response.status_code}, {response.text}")
+
+
+def save_log_file(media_id: str, log: str):
+    with open(f"logs/{media_id}.txt", "a") as file:
+        file.write(log)
