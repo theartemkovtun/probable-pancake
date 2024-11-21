@@ -160,6 +160,6 @@ def submit_anchor_request(media_id: str, sha3_512_hash: str, metadata):
 
 
 def save_log_file(media_id: str, log: str, era: RecordEra, is_anchor_success: bool, validation_errors: int):
-    filename = f"logs/{str(era.value).lower()}/{'success' if is_anchor_success else 'failed'}_{validation_errors}_{media_id}.txt"
+    filename = f"logs/{str(era.name).lower()}/{'success' if is_anchor_success else 'failed'}_{validation_errors}_{media_id}.txt"
     with open(filename, "a") as file:
         file.write(log)
