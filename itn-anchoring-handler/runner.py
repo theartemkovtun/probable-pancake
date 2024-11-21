@@ -40,6 +40,8 @@ def message_handler(ch, method, _, data):
 
         logger.info(f"{media_id}: Hashing finished successfully", log)
 
+        print(str(log))
+
         metadata = {
             "periphery": dict(periphery_stats),
             "azure": dict(azure_data),
@@ -53,7 +55,8 @@ def message_handler(ch, method, _, data):
     except Exception as e:
         logger.error(f"{media_id}: {repr(e)}", log)
 
-    services.save_log_file(media_id, "\n".join(log))
+    print(str(log))
+    # services.save_log_file(media_id, "\n".join(log))
 
 
 time.sleep(15)
