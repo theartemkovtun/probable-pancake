@@ -5,6 +5,7 @@ import time
 import services
 import math
 import logger
+import validators
 
 load_dotenv('.env')
 
@@ -44,6 +45,8 @@ def message_handler(ch, method, _, data):
 
         logger.info(f"{media_id}: Hashing finished successfully", log)
 
+        validation_errors = validators.validate_media(era, periphery_stats, azure_data, xen_data, hashes.md5, log)
+
         metadata = {
             "periphery": dict(periphery_stats),
             "azure": dict(azure_data),
@@ -51,6 +54,7 @@ def message_handler(ch, method, _, data):
         }
 
         services.submit_anchor_request(media_id, hashes.sha3_512, metadata)
+        is_anchor_success = True
 
         logger.success(f"{media_id}: Finished. Took {time.time() - start_time} seconds", log)
 

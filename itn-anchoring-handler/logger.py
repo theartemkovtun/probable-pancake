@@ -13,7 +13,7 @@ class bcolors:
 
 
 def _build_output_message(message: str):
-    return f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {message}\n"
+    return f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {message}"
 
 
 def info(message: str, output: list[str]):
