@@ -1,5 +1,6 @@
 import logging
 from dotenv import load_dotenv
+from models import RecordEra
 import time
 import services
 import math
@@ -11,6 +12,9 @@ load_dotenv('.env')
 def message_handler(ch, method, _, data):
     log = []
     media_id = data.decode().upper()
+    validation_errors = 0
+    is_anchor_success = False
+    era = RecordEra.Rest
 
     try:
         start_time = time.time()
@@ -40,8 +44,6 @@ def message_handler(ch, method, _, data):
 
         logger.info(f"{media_id}: Hashing finished successfully", log)
 
-        print(str(log))
-
         metadata = {
             "periphery": dict(periphery_stats),
             "azure": dict(azure_data),
@@ -55,8 +57,7 @@ def message_handler(ch, method, _, data):
     except Exception as e:
         logger.error(f"{media_id}: {repr(e)}", log)
 
-    print(str(log))
-    # services.save_log_file(media_id, "\n".join(log))
+    services.save_log_file(media_id, "\n".join(log), era, is_anchor_success, validation_errors)
 
 
 time.sleep(15)

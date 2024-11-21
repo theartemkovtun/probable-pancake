@@ -3,6 +3,7 @@ from datetime import datetime
 
 
 class RecordEra(Enum):
+    Rest = 0
     Pre2017 = 1
     Migration2017Era = 2
     Between2017And2022 = 3
