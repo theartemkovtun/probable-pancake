@@ -16,21 +16,29 @@ def _build_output_message(message: str):
     return f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: {message}"
 
 
-def info(message: str, output: list[str]):
-    print(message)
-    output.append(_build_output_message(message))
+def _build_log(media_id: str, message: str):
+    return f"{media_id}: {message}"
 
 
-def warning(message: str, output: list[str]):
-    print(f"{bcolors.WARNING}{message}{bcolors.ENDC}")
-    output.append(_build_output_message(message))
+def info(media_id: str, message: str, output: list[str]):
+    log = _build_log(media_id, message)
+    print(log)
+    output.append(_build_output_message(log))
 
 
-def error(message: str, output: list[str]):
-    print(f"{bcolors.ERROR}{message}{bcolors.ENDC}")
-    output.append(_build_output_message(message))
+def warning(media_id: str, message: str, output: list[str]):
+    log = _build_log(media_id, message)
+    print(f"{bcolors.WARNING}{log}{bcolors.ENDC}")
+    output.append(_build_output_message(log))
 
 
-def success(message: str, output: list[str]):
-    print(f"{bcolors.OKGREEN}{message}{bcolors.ENDC}")
-    output.append(_build_output_message(message))
+def error(media_id: str, message: str, output: list[str]):
+    log = _build_log(media_id, message)
+    print(f"{bcolors.ERROR}{log}{bcolors.ENDC}")
+    output.append(_build_output_message(log))
+
+
+def success(media_id: str, message: str, output: list[str]):
+    log = _build_log(media_id, message)
+    print(f"{bcolors.OKGREEN}{log}{bcolors.ENDC}")
+    output.append(_build_output_message(log))
