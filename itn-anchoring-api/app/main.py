@@ -75,6 +75,6 @@ async def queue_single(media_id: str):
         "era": era.name
     }
 
-    services.submit_anchor_request(media_id.lower(), metadata)
+    services.submit_metadata(media_id.lower(), metadata)
 
     return {"status": 'ok'}
