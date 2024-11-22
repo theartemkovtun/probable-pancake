@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 from rabbit_client import RabbitClient
 from uuid import UUID
+import services
 
 load_dotenv()
 
@@ -45,3 +46,35 @@ async def queue_single(items: list[AnchorItem]):
         ids.append(item.id)
 
     rabbit_client.publish(ids)
+
+
+@app.post("/update_metadata/{media_id}")
+async def queue_single(media_id: str):
+    media_id = media_id.upper()
+
+    folders_path = '/'.join(list(media_id[:4]))
+    filepath = f'periphery/{folders_path}/{media_id}.mxf'
+
+    periphery_stats = services.get_periphery_stats(filepath)
+    print(media_id, "Periphery data successfully fetched")
+    filepath = periphery_stats.filepath
+
+    azure_data = services.get_azure_data_tables_data(media_id)
+    print(media_id, "Azure data successfully fetched")
+
+    xen_data = services.get_xendata(media_id)
+    print(media_id, "Xen data successfully fetched")
+
+    era = services.identify_era(azure_data.created)
+    print(media_id, f"Era identified - {era.name}")
+
+    metadata = {
+        "periphery": dict(periphery_stats),
+        "azure": dict(azure_data),
+        "xendata": dict(xen_data),
+        "era": era.name
+    }
+
+    services.submit_anchor_request(media_id.lower(), metadata)
+
+    return {"status": 'ok'}
