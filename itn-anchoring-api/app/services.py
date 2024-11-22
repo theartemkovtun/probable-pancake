@@ -86,7 +86,7 @@ def submit_metadata(media_id: str, metadata):
 
     request_body = json.dumps(metadata, default=str)
 
-    response = requests.put(f"{os.environ.get('ANCHORING_URL')}/api/media/{media_id}/metadata", json=request_body)
+    response = requests.put(f"https://anchoring-backend.apps.public.ecs.prod.openorigins.com/api/media/{media_id}/metadata", json=request_body)
 
     if response.status_code != 200:
         raise Exception(F"Failed to submit anchor request: {response.status_code}, {response.text}")
