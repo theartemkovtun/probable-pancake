@@ -49,12 +49,13 @@ def message_handler(ch, method, _, data):
                                                       azure_data, xen_data, hashes.md5, log)
 
         metadata = {
+            "era": era.name,
             "periphery": dict(periphery_stats),
             "azure": dict(azure_data),
             "xendata": dict(xen_data)
         }
 
-        services.submit_anchor_request(media_id, hashes.sha3_512, metadata)
+        services.submit_anchor_request(filepath.split('/')[-1], hashes.sha3_512, metadata)
         is_anchor_success = True
 
         logger.success(media_id, f"Finished. Took {time.time() - start_time} seconds", log)
