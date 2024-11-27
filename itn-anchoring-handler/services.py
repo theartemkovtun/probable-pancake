@@ -143,9 +143,10 @@ def identify_era(date: datetime):
         return RecordEra.Post2022
 
 
-def submit_anchor_request(name: str, sha3_512_hash: str, metadata):
+def submit_anchor_request(media_id: str, name: str, sha3_512_hash: str, metadata):
 
     request_body = {
+        "id": media_id,
         "hash": sha3_512_hash,
         "name": name,
         "metadata": json.dumps(metadata, default=str)
