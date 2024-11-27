@@ -26,16 +26,16 @@ async def health_check():
     return {"status": 'ok'}
 
 
-@app.post("/queue-anchoring-single")
-async def queue_single(item: AnchorItem):
+@app.post("/queue-for-anchoring/{media_id}")
+async def queue_single(media_id: str):
     rabbit_client = RabbitClient()
-    if not is_valid_uuid(item.id):
+    if not is_valid_uuid(media_id):
         raise HTTPException(status_code=404, detail="'id' has to be UUIDv4 format")
 
-    rabbit_client.publish(item.id)
+    rabbit_client.publish(media_id)
 
 
-@app.post("/queue-anchoring")
+@app.post("/queue-for-anchoring")
 async def queue_single(items: list[AnchorItem]):
     rabbit_client = RabbitClient()
 
