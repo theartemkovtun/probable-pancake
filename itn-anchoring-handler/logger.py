@@ -1,4 +1,5 @@
 from datetime import datetime
+import threading
 
 class bcolors:
     HEADER = '\033[95m'
@@ -17,7 +18,7 @@ def _build_output_message(message: str):
 
 
 def _build_log(media_id: str, message: str):
-    return f"{media_id}: {message}"
+    return f"{threading.get_native_id():4.0f} | {media_id}: {message}"
 
 
 def info(media_id: str, message: str, output: list[str]):

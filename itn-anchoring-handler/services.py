@@ -116,16 +116,13 @@ def get_file_hashes(filepath: str, total_chunks: int):
 
     with open(filepath, 'rb') as file:
         for piece in read_in_chunks(file):
-            read_time = time.time() - smart_time
-            smart_time = time.time()
-
             md5.update(piece)
             sha3512.update(piece)
 
-            hash_time = time.time() - smart_time
+            process_time = time.time() - smart_time
             smart_time = time.time()
 
-            print(f"{filepath[-40:-4]}: Chunk ({current_chunk}/{total_chunks}): read time - {read_time} sec, hash time - {hash_time} sec")
+            print(f"{filepath[-40:-4]}: Chunk ({current_chunk}/{total_chunks}): process time - {round(process_time, 2)} sec")
 
             current_chunk += 1
 
