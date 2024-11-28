@@ -11,6 +11,7 @@ import threading
 import pika
 import base64
 import pymssql
+import threading
 
 
 class RabbitMqThreadedConsumer(threading.Thread):
@@ -122,7 +123,7 @@ def get_file_hashes(filepath: str, total_chunks: int):
             process_time = time.time() - smart_time
             smart_time = time.time()
 
-            print(f"{filepath[-40:-4]}: Chunk ({current_chunk}/{total_chunks}): process time - {round(process_time, 2)} sec")
+            print(f"{threading.get_native_id():4.0f} | {filepath[-40:-4]}: Chunk ({current_chunk}/{total_chunks}): process time - {round(process_time, 2)} sec")
 
             current_chunk += 1
 
