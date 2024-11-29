@@ -45,6 +45,7 @@ def message_handler(ch, method, _, data):
         hashes = services.get_file_hashes(filepath, math.ceil(periphery_stats.size / 1000000000))
 
         logger.info(media_id, "Hashing finished successfully", log)
+        logger.info(media_id, f"SHA3-512: {hashes.sha3_512}", log)
 
         validation_errors = validators.validate_media(media_id, era, periphery_stats,
                                                       azure_data, xen_data, hashes.md5, log)
