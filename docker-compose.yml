@@ -20,6 +20,9 @@ services:
     build:
       context: ./itn-anchoring-handler
       dockerfile: Dockerfile
+    deploy:
+      mode: replicated
+      replicas: 10
     networks:
       - backend
     depends_on:
@@ -37,8 +40,11 @@ services:
       XENDATA_DATABASE: ${XENDATA_DATABASE}
       XENDATA_USER: ${XENDATA_USER}
       XENDATA_PASSWORD: ${XENDATA_PASSWORD}
+      ANCHORING_URL: ${ANCHORING_URL}
+      ANCHORING_KEY: ${ANCHORING_KEY}
     volumes:
       - /mnt/mxfs/Archive:/anchoring-handler/periphery
+      - /mnt/sdb/logs:/anchoring-handler/logs
 
   anchoring-api:
     container_name: anchoring-api
@@ -51,7 +57,7 @@ services:
     depends_on:
       - rabbitmq
     ports:
-      - 3001:3001
+      - 3002:3001
     environment:
       RABBITMQ_HOST: ${RABBITMQ_HOST}
       RABBITMQ_PORT: ${RABBITMQ_PORT}

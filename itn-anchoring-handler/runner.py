@@ -1,4 +1,3 @@
-import logging
 from dotenv import load_dotenv
 from models import RecordEra
 import time
@@ -6,6 +5,8 @@ import services
 import math
 import logger
 import validators
+import pika
+import os
 
 load_dotenv('.env')
 
@@ -68,6 +69,16 @@ def message_handler(ch, method, _, data):
 
 time.sleep(15)
 
-for _ in range(10):
-    td = services.RabbitMqThreadedConsumer(message_handler)
-    td.start()
+credentials = pika.PlainCredentials(
+    username=os.environ.get("RABBITMQ_USERNAME"),
+    password=os.environ.get("RABBITMQ_PASSWORD")
+)
+connection = pika.BlockingConnection(pika.ConnectionParameters(
+    os.environ.get("RABBITMQ_HOST"), os.environ.get("RABBITMQ_PORT"), '/', credentials, heartbeat=0)
+)
+
+channel = connection.channel()
+channel.queue_declare(queue=os.environ.get("RABBITMQ_QUEUE_NAME"))
+channel.basic_qos(prefetch_count=1)
+channel.basic_consume(os.environ.get("RABBITMQ_QUEUE_NAME"), message_handler)
+channel.start_consuming()
