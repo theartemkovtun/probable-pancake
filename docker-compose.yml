@@ -27,6 +27,7 @@ services:
       - backend
     depends_on:
       - rabbitmq
+    restart: always
     environment:
       RABBITMQ_HOST: ${RABBITMQ_HOST}
       RABBITMQ_PORT: ${RABBITMQ_PORT}
