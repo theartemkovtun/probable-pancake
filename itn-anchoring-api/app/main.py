@@ -46,3 +46,11 @@ async def queue_single(items: list[AnchorItem]):
         ids.append(item.id)
 
     rabbit_client.publish(ids)
+
+@app.get("/queue/messages-number")
+async def queue_single():
+    rabbit_client = RabbitClient()
+
+    return {
+        "messages": rabbit_client.get_number_of_messages()
+    }

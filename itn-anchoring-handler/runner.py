@@ -6,10 +6,10 @@ import math
 import logger
 import validators
 import pika
+from pika.exceptions import ChannelClosed
 import os
 
 load_dotenv('.env')
-
 
 def message_handler(ch, method, _, data):
     log = []
@@ -20,7 +20,6 @@ def message_handler(ch, method, _, data):
 
     try:
         start_time = time.time()
-        ch.basic_ack(delivery_tag=method.delivery_tag)
 
         folders_path = '/'.join(list(media_id[:4]))
         filepath = f'periphery/{folders_path}/{media_id}.mxf'
@@ -63,9 +62,18 @@ def message_handler(ch, method, _, data):
         logger.success(media_id, f"Finished. Took {time.time() - start_time} seconds", log)
 
     except Exception as e:
-        logger.error(media_id, f"{repr(e)}", log)
+        logger.error(media_id, e, log)
+        logger.error(media_id, f"Failed. Took {time.time() - start_time} seconds", log)
+    finally:
+        try:
+            services.save_log_file(media_id, "\n".join(log), era, is_anchor_success, validation_errors)
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+        except ChannelClosed as e:
+            print("Inner Channel closed, %s", e)
+        except Exception as e2:
+            print("Inner Generic %s", e2)
 
-    services.save_log_file(media_id, "\n".join(log), era, is_anchor_success, validation_errors)
+    
 
 
 time.sleep(15)
