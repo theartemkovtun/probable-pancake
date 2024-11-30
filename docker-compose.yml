@@ -15,8 +15,6 @@ services:
       - backend
 
   anchoring-handler:
-    container_name: anchoring-handler
-    hostname: anchoring-handler
     build:
       context: ./itn-anchoring-handler
       dockerfile: Dockerfile
