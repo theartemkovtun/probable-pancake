@@ -23,7 +23,6 @@ def message_handler(ch, method, _, data):
 
         if services.is_duplicate(media_id):
             print('Duplicate item skipped')
-            ch.basic_ack(delivery_tag=method.delivery_tag)
             return
 
         folders_path = '/'.join(list(media_id[:4]))
