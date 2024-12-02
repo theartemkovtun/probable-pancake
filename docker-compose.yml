@@ -50,7 +50,7 @@ services:
       XENDATA_PASSWORD: ${XENDATA_PASSWORD}
       ANCHORING_URL: ${ANCHORING_URL}
       ANCHORING_KEY: ${ANCHORING_KEY}
-      REDIS_HOSE: ${REDIS_HOST}
+      REDIS_HOST: ${REDIS_HOST}
     volumes:
       - /mnt/mxfs/Archive:/anchoring-handler/periphery
       - /mnt/sdb/logs:/anchoring-handler/logs
