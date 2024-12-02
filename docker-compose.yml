@@ -19,7 +19,9 @@ services:
     hostname: ${REDIS_HOST}
     restart: always
     ports:
-      - "6379:6379"
+      - 6379:6379
+    networks:
+      - backend
     volumes:
       - /mnt/sdb/redis:/root/redis
 

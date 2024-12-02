@@ -17,6 +17,7 @@ def message_handler(ch, method, _, data):
     validation_errors = 0
     is_anchor_success = False
     era = RecordEra.Rest
+    start_time = time.time()
 
     try:
 
@@ -24,8 +25,6 @@ def message_handler(ch, method, _, data):
             print('Duplicate item skipped')
             ch.basic_ack(delivery_tag=method.delivery_tag)
             return
-
-        start_time = time.time()
 
         folders_path = '/'.join(list(media_id[:4]))
         filepath = f'periphery/{folders_path}/{media_id}.mxf'
