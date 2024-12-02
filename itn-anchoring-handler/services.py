@@ -165,11 +165,11 @@ def save_log_file(media_id: str, log: str, era: RecordEra, is_anchor_success: bo
         file.write(log + '\n')
 
 def is_duplicate(media_id: str):
-    redis = redis.Redis(host=os.environ.get("REDIS_HOST"), port=6379, db=0)
+    redis_client = redis.Redis(host=os.environ.get("REDIS_HOST"), port=6379, db=0)
 
-    is_media_exist = redis.get(media_id) is not None
+    is_media_exist = redis_client.get(media_id) is not None
 
     if not is_media_exist:
-        redis.set(media_id, media_id)
+        redis_client.set(media_id, media_id)
 
     return is_media_exist
