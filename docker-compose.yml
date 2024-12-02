@@ -14,6 +14,15 @@ services:
     networks:
       - backend
 
+  redis:
+    image: redis:latest
+    hostname: ${REDIS_HOST}
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - /mnt/sdb/redis:/root/redis
+
   anchoring-handler:
     build:
       context: ./itn-anchoring-handler
@@ -41,6 +50,7 @@ services:
       XENDATA_PASSWORD: ${XENDATA_PASSWORD}
       ANCHORING_URL: ${ANCHORING_URL}
       ANCHORING_KEY: ${ANCHORING_KEY}
+      REDIS_HOSE: ${REDIS_HOST}
     volumes:
       - /mnt/mxfs/Archive:/anchoring-handler/periphery
       - /mnt/sdb/logs:/anchoring-handler/logs

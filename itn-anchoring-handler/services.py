@@ -12,6 +12,7 @@ import pika
 import base64
 import pymssql
 import threading
+import redis
 
 
 class RabbitMqThreadedConsumer(threading.Thread):
@@ -162,3 +163,13 @@ def save_log_file(media_id: str, log: str, era: RecordEra, is_anchor_success: bo
     filename = f"logs/{str(era.name).lower()}/{'success' if is_anchor_success else 'failed'}_{validation_errors}_{media_id}.txt"
     with open(filename, "a+") as file:
         file.write(log + '\n')
+
+def is_duplicate(media_id: str):
+    redis = redis.Redis(host=os.environ.get("REDIS_HOST"), port=6379, db=0)
+
+    is_media_exist = redis.get(media_id) is not None
+
+    if not is_media_exist:
+        redis.set(media_id, media_id)
+
+    return is_media_exist

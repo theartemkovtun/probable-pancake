@@ -19,6 +19,11 @@ def message_handler(ch, method, _, data):
     era = RecordEra.Rest
 
     try:
+
+        if services.is_duplicate(media_id):
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+            return
+
         start_time = time.time()
 
         folders_path = '/'.join(list(media_id[:4]))
