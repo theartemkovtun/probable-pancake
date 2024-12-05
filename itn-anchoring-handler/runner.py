@@ -22,8 +22,7 @@ def message_handler(ch, method, _, data):
     try:
 
         if services.is_duplicate(media_id):
-            print('Duplicate item skipped')
-            return
+            raise Exception('Duplicate item skipped')
 
         folders_path = '/'.join(list(media_id[:4]))
         filepath = f'periphery/{folders_path}/{media_id}.mxf'
